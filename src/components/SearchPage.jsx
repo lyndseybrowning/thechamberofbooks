@@ -20,6 +20,7 @@ const SearchPage = () => {
                     const queryResult = parser.parse(response);
 
                     setQueryResults(queryResult);
+                    {searchResults(queryResult)};
                 },
             )
         }
@@ -39,13 +40,15 @@ const SearchPage = () => {
         )
     }
 
-    const searchResults = () => {
-        queryResults.GoodreadsResponse.search.results.work.map(item => (
-            <div>
-                <h2>You're a wizard, Harry:</h2>
-                <li key={item}>{item.best_book.title}</li>
-            </div>
-        ));
+    const searchResults = queryResult => {
+        queryResult.GoodreadsResponse.search.results.work.map(item => {
+            return (
+                <div>
+                    <h2>You're a wizard, Harry:</h2>
+                    <li key={item}>{item.best_book.title}</li>
+                </div>
+            )
+        });
     }
 
     const handleChange = event => {
