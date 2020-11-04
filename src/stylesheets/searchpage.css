@@ -1,0 +1,9 @@
+input {
+    width: 500px;
+    height: 50px;
+}
+
+.search-box {
+    display: flex;
+    justify-content: center;
+}
