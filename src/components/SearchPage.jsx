@@ -1,32 +1,33 @@
 import React, { Fragment, useState, useEffect } from "react";
-import '../stylesheets/searchpage.css';
+import parser from "fast-xml-parser";
+import "../stylesheets/searchpage.css";
+
+const { REACT_APP_API_KEY } = process.env;
 
 const SearchPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [queryResults, setQueryResults] = useState([]);
-    const parser = require('fast-xml-parser');
 
     useEffect(() => {
         if (searchQuery.length > 0) {
-            const apiKey = "iVMi7uEi9GrIxbrIYWqSJw";
-            const apiUrl = "https://www.goodreads.com/search/index.xml?" + "key=" + apiKey + "&q=" + searchQuery;
+            const apiUrl = `https://www.goodreads.com/search/index.xml?key=${REACT_APP_API_KEY}&q=${searchQuery}`;
 
             fetch(apiUrl)
-                .then(response => response.text())
+                .then((response) => response.text())
                 .then((response) => {
                     const parsedJson = parser.validate(response);
 
                     if (parsedJson !== true) console.log(parsedJson.err);
                     const queryResult = parser.parse(response);
 
-                    setQueryResults(queryResult);
-                    {searchResults(queryResult)};
-                },
-            )
+                    // TODO: validate returned object
+                    setQueryResults(
+                        queryResult.GoodreadsResponse.search.results.work,
+                    );
+                });
         }
-
     }, [searchQuery]);
-    
+
     const searchBox = () => {
         return (
             <div className="search-box">
@@ -37,29 +38,33 @@ const SearchPage = () => {
                     onChange={handleChange}
                 />
             </div>
-        )
-    }
+        );
+    };
 
-    const searchResults = queryResult => {
-        queryResult.GoodreadsResponse.search.results.work.map(item => {
+    const searchResults = () => {
+        if (queryResults.length === 0) {
+            return <p>No results found.</p>;
+        }
+
+        return queryResults.map((item) => {
             return (
-                <div>
-                    <h2>You're a wizard, Harry:</h2>
+                <ul>
                     <li key={item}>{item.best_book.title}</li>
-                </div>
-            )
+                </ul>
+            );
         });
-    }
+    };
 
-    const handleChange = event => {
+    const handleChange = (event) => {
         setSearchQuery(event.target.value);
-    }
+    };
 
     return (
         <Fragment>
             {searchBox()}
+            {searchResults()}
         </Fragment>
-    )
-}
+    );
+};
 
 export default SearchPage;
