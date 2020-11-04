@@ -46,13 +46,13 @@ const SearchPage = () => {
             return <p>No results found.</p>;
         }
 
-        return queryResults.map((item) => {
-            return (
-                <ul>
+        return (
+            <ul>
+                {queryResults.map((item) => (
                     <li key={item}>{item.best_book.title}</li>
-                </ul>
-            );
-        });
+                ))}
+            </ul>
+        );
     };
 
     const handleChange = (event) => {
